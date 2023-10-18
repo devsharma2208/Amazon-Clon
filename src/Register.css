@@ -1,0 +1,36 @@
+.register {
+  background-color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.input_rig {
+  padding-left: 10px;
+  border: 1px solid;
+}
+.rig {
+  color: blue;
+  cursor: pointer;
+}
+.go_to_login {
+  text-decoration: none;
+  color: blue;
+}
+.registerButton {
+  border-color: #a88734 #9c7e31 #846a29;
+  background: #f0c14b;
+  border-radius: 2px;
+  width: 100%;
+  height: 30px;
+  border: 1px solid;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.login_container > p {
+  margin-top: 20px;
+  padding-bottom: 10px;
+  font-size: 12px;
+  border-bottom: 0.5px solid;
+}
