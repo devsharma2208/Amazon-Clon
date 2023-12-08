@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Register.css";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth, db } from "./firebase";
+import { addDoc, collection } from "firebase/firestore";
 
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [massage, setMassage] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const register = async (e) => {
     e.preventDefault();
@@ -16,16 +18,30 @@ function Register() {
 
     await createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
         const user = userCredential.user;
-        console.log(user);
-        // navigate("/login");
-        // ...
+        // console.log(user.uid);
+
+        try {
+          const docRef = addDoc(collection(db, "user"), {
+            user: user,
+          });
+          console.log("Document written with ID: ", docRef.id);
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }
+        sessionStorage.setItem(
+          "loginUser",
+          JSON.stringify({ name: name, email: email })
+        );
+        navigate("/");
+        alert("Success");
       })
 
       .catch((error) => {
         const errorCode = error.code;
-        if (!email.includes("@")) {
+        if (errorCode === "auth/email-already-in-use") {
+          setMassage("This email is Register already please ↑↑ Sign in. ");
+        } else if (!email.includes("@")) {
           setMassage("Enter a valid email.");
           e.preventDefault();
         } else if (password.length < 6) {
@@ -35,7 +51,6 @@ function Register() {
         }
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
-        // ..
       });
   };
   return (

@@ -1,21 +1,44 @@
 import React from "react";
 import "./Product.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { db } from "./firebase";
+import { addDoc, collection } from "firebase/firestore";
+
 function Product({ id, title, price, rating, image }) {
   const dispatch = useDispatch();
+  const cart_data = useSelector((state) => state.cart_Data);
 
-  const handleCartData = () => {
-    dispatch({
-      type: "ADD_TO_CART",
-      payload: {
-        id: id,
-        title: title,
-        image: image,
-        price: price,
-        rating: rating,
-      },
+  function handleCartData() {
+    return Promise.resolve(
+      dispatch({
+        type: "ADD_TO_CART",
+        payload: {
+          id: id,
+          title: title,
+          image: image,
+          price: price,
+          rating: rating,
+        },
+      })
+    ).then(async () => {
+      try {
+        const collectionName = `$users/${localStorage.getItem("uId")}/cart`;
+
+        const docRef = await addDoc(collection(db, collectionName), {
+          cart: {
+            id: id,
+            title: title,
+            image: image,
+            price: price,
+            rating: rating,
+          },
+        });
+        console.log("Document written with ID: ", docRef.id);
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
     });
-  };
+  }
 
   // console.log(cartData);
 
